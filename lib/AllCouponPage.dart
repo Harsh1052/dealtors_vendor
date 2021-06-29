@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:dealtors_vendor/CoupenDetail.dart';
 import 'package:dealtors_vendor/CreateCoupon.dart';
 import 'package:dealtors_vendor/Model/Coupon.dart';
+import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
+import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:flutter/services.dart';
-import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
-import 'dart:convert';
-import 'CustomWidget/DrawerWidget.dart';
+idget.dart';
 import 'CustomWidget/ToastFile.dart';
 import 'CustomWidget/empty.dart';
 import 'Model/GenrelModel.dart';
@@ -195,7 +195,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
         if (extractdata['ack'] == 1) {
           /*   live_data=List<Coupon>.from(
               extractdata["result"].map((x) => Coupon.fromJson(x)));
-*/
+          */
           if (live_ll == 0) {
             live_data.clear();
           }
