@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "995391036121",
+    "project_id": "dealtors-vendor",
+    "storage_bucket": "dealtors-vendor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995391036121:android:ebe02e13b5ffa01ef8fcc8",
+        "android_client_info": {
+          "package_name": "com.dealtors_vendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995391036121-n4gkpu5ot41bvoi8hbhlf8l163u2lfhj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dealtors_vendor",
+            "certificate_hash": "8fcedf5d67086625656be3c2fd250edb3d9ce36b"
+          }
+        },
+        {
+          "client_id": "995391036121-skacjfsei2u8u55s85na3mvb52c9mehn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF8zz20i6ju_uCmQgv9n8rGwgouV2C1xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995391036121-skacjfsei2u8u55s85na3mvb52c9mehn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "995391036121-u9cn0d9bmtuovlc6ltg5pavlkne7jmlq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dealtorsvendor"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
