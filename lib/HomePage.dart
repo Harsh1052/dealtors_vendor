@@ -130,11 +130,14 @@ class _HomePageState extends State<HomePage> {
         //app_update_msg = extractdata["app_version_msg"].toString();
 
         if (Platform.isAndroid && extractdata['app_update_android'] == "1") {
+          print("First IF Condition");
           new_app_version = extractdata['app_version_android'];
           if (later_app_version !=
               extractdata['app_version_android'].toString()) {
+            print("Second IF Condition:= $later_app_version");
             if (extractdata['app_version_android'].toString() !=
                 current_app_version) {
+              print("third IF Condition:=$current_app_version");
               AppUpdate(extractdata['app_version_android_msg'].toString(),
                   extractdata['update_android_compelsory'].toString());
             }
@@ -302,6 +305,8 @@ class _HomePageState extends State<HomePage> {
     final PackageInfo info = await PackageInfo.fromPlatform();
     //setState(() {
     current_app_version = info.version;
+
+    print("BUild:-${info.buildNumber}");
 
     //});
   }

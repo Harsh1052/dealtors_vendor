@@ -1,4 +1,3 @@
-
 import 'Coupon.dart';
 
 class Vendor {
@@ -52,6 +51,10 @@ class VendorDetail {
   final String business_landmark;
   final String business_location;
   final String business_category_id;
+  final String openTimeEvening;
+  final String closeTimeEvening;
+  final String splitFlag;
+
   List<Coupon> coupons;
 
   VendorDetail(
@@ -73,10 +76,16 @@ class VendorDetail {
       this.business_landmark,
       this.business_location,
       this.business_category_id,
-      this.coupons});
+      this.coupons,
+      this.closeTimeEvening,
+      this.openTimeEvening,
+      this.splitFlag});
 
   factory VendorDetail.fromJson(Map<String, dynamic> json) => VendorDetail(
       id: json["id"],
+      splitFlag: json['time_split_flag'],
+      closeTimeEvening: json['closing_time_evening'],
+      openTimeEvening: json['opening_time_evening'],
       first_name: json["first_name"] != null ? json["first_name"] : "",
       business_category_name: json["business_category_name"] != null
           ? json["business_category_name"]
@@ -95,11 +104,17 @@ class VendorDetail {
       about_business:
           json["about_business"] != null ? json["about_business"] : "",
       email_address: json["email_address"] != null ? json["email_address"] : "",
-      business_contact_no: json["business_contact_no"] != null ? json["business_contact_no"] : "",
+      business_contact_no: json["business_contact_no"] != null
+          ? json["business_contact_no"]
+          : "",
       business_area: json["business_area"] != null ? json["business_area"] : "",
-      business_landmark: json["business_landmark"] != null ? json["business_landmark"] : "",
-      business_location: json["business_location"] != null ? json["business_location"] : "",
-      business_category_id: json["business_category_id"] != null ? json["business_category_id"] : "",
+      business_landmark:
+          json["business_landmark"] != null ? json["business_landmark"] : "",
+      business_location:
+          json["business_location"] != null ? json["business_location"] : "",
+      business_category_id: json["business_category_id"] != null
+          ? json["business_category_id"]
+          : "",
       coupons: json["coupons"] == ""
           ? null
           : List<Coupon>.from(json["coupons"].map((x) => Coupon.fromJson(x))));

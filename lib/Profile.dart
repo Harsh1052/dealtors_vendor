@@ -1,22 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:dealtors_vendor/AddRestaurantPage.dart';
 import 'package:dealtors_vendor/EditProfile.dart';
-import 'package:dealtors_vendor/HomePage.dart';
+import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
+import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
 
-import 'ChnagePhoneNumber.dart';
-import 'CustomWidget/AlertForCoupon.dart';
 import 'CustomWidget/empty.dart';
 import 'Model/Coupon.dart';
-import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
-import 'dart:convert';
-
 import 'Model/Vendor.dart';
 import 'netutils/preferences.dart';
 
@@ -54,6 +49,12 @@ class _DetailPageState extends State<Profile> {
           vendor_detail = List<VendorDetail>.from(
               extractdata["result"].map((x) => VendorDetail.fromJson(x)));
           // coupon_data = vendor_detail[0].coupons;
+          print(vendor_detail[0].splitFlag);
+          if (vendor_detail[0].splitFlag == "0") {
+            isSplit = false;
+          } else {
+            isSplit = true;
+          }
           isProgress = false;
         } catch (e) {
           print(e);
@@ -66,6 +67,7 @@ class _DetailPageState extends State<Profile> {
   }
 
   bool is_connected = false;
+  bool isSplit = true;
 
   final Connectivity _connectivity = Connectivity();
 
@@ -427,36 +429,50 @@ class _DetailPageState extends State<Profile> {
                                                         fontFamily:
                                                             'poppins_bold'),
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 5.0),
-                                                    child: Text(
-                                                      "Open Time : " +
-                                                          vendor_detail[0]
-                                                              .open_time,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              'poppins_regular'),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 5.0),
-                                                    child: Text(
-                                                      "Close Time : " +
-                                                          vendor_detail[0]
-                                                              .close_time,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              'poppins_regular'),
-                                                    ),
-                                                  ),
+                                                  isSplit
+                                                      ? showSplitTimeWidget()
+                                                      : Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 5.0),
+                                                              child: Text(
+                                                                "Open Time : " +
+                                                                    vendor_detail[
+                                                                            0]
+                                                                        .open_time,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'poppins_regular'),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 5.0),
+                                                              child: Text(
+                                                                "Close Time : " +
+                                                                    vendor_detail[
+                                                                            0]
+                                                                        .close_time,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'poppins_regular'),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
                                                 ],
                                               ),
                                             ),
@@ -538,6 +554,45 @@ class _DetailPageState extends State<Profile> {
                         ),
         ),
       ),
+    );
+  }
+
+  Widget showSplitTimeWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "Morning Time",
+          style: TextStyle(
+              fontFamily: 'poppins_regular', fontWeight: FontWeight.bold),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 2.0),
+          child: Flexible(
+            child: Text(
+              vendor_detail[0].open_time + " - " + vendor_detail[0].close_time,
+              style: TextStyle(fontFamily: 'poppins_regular'),
+            ),
+          ),
+        ),
+        Text(
+          "Evening Time",
+          style: TextStyle(
+              fontFamily: 'poppins_regular', fontWeight: FontWeight.bold),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 2.0),
+          child: Flexible(
+            child: Text(
+              vendor_detail[0].openTimeEvening +
+                  " - " +
+                  vendor_detail[0].closeTimeEvening,
+              style: TextStyle(fontFamily: 'poppins_regular'),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

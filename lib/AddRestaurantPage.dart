@@ -35,6 +35,10 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
   String category_id = "";
   final close_time = TextEditingController();
   final open_time = TextEditingController();
+  final close_time_evening = TextEditingController();
+  final open_time_evening = TextEditingController();
+  final close_time_morning = TextEditingController();
+  final open_time_morning = TextEditingController();
   final buisness_name = TextEditingController();
   final business_contact = TextEditingController();
   final business_area = TextEditingController();
@@ -43,6 +47,8 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
   final business_about = TextEditingController();
   String _hour, _minute, _time;
   var result;
+  TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
+  String _setTime = "";
 
   Future<File> file;
   String status = '';
@@ -51,6 +57,7 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
   String errMessage = 'Error Uploading Image';
   String image_path = "";
   bool is_connected = false;
+  bool isSplite = false;
 
   final Connectivity _connectivity = Connectivity();
 
@@ -157,7 +164,12 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
           business_landmark.text,
           open_time.text,
           close_time.text,
-          base64Image);
+          base64Image,
+          open_time_morning.text,
+          close_time_morning.text,
+          open_time_evening.text,
+          close_time_evening.text,
+          isSplite);
     } else {
       response = await retrofit.editBussiness(
           await SharedPreferencesHelper.getPreference("user_id"),
@@ -172,7 +184,12 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
           business_area.text,
           business_landmark.text,
           open_time.text,
-          close_time.text);
+          close_time.text,
+          open_time_morning.text,
+          close_time_morning.text,
+          open_time_evening.text,
+          close_time_evening.text,
+          isSplite);
     }
 
     var extractdata = json.decode(response.body);
@@ -258,7 +275,14 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
           business_location.text = vendor_detail[0].business_location;
           open_time.text = vendor_detail[0].open_time;
           close_time.text = vendor_detail[0].close_time;
+          open_time_morning.text = vendor_detail[0].open_time;
+          close_time_morning.text = vendor_detail[0].close_time;
+          open_time_evening.text = vendor_detail[0].openTimeEvening;
+          close_time_evening.text = vendor_detail[0].closeTimeEvening;
+          print("Close Time=${close_time_evening.text}");
+          print("Close Time=${vendor_detail[0].closeTimeEvening}");
           image_path = vendor_detail[0].image_path;
+          isSplite = vendor_detail[0].splitFlag == "0" ? false : true;
           // coupon_data = vendor_detail[0].coupons;
           isProgress = false;
         } catch (e) {
@@ -277,31 +301,30 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
     });
   }
 
+  Future<Null> _selectTime(
+      BuildContext context, TextEditingController text_controller) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    );
+    if (picked != null)
+      setState(() {
+        print("hello");
+        selectedTime = picked;
+        _hour = selectedTime.hour.toString();
+        _minute = selectedTime.minute.toString();
+        _time = _hour + ' : ' + _minute;
+        text_controller.text = _time;
+        text_controller.text = formatDate(
+            DateTime(2019, 08, 1, selectedTime.hour, selectedTime.minute),
+            [hh, ':', nn, " ", am]).toString();
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
-    String _setTime = "";
-    Future<Null> _selectTime(
-        BuildContext context, TextEditingController text_controller) async {
-      final TimeOfDay picked = await showTimePicker(
-        context: context,
-        initialTime: selectedTime,
-      );
-      if (picked != null)
-        setState(() {
-          print("hello");
-          selectedTime = picked;
-          _hour = selectedTime.hour.toString();
-          _minute = selectedTime.minute.toString();
-          _time = _hour + ' : ' + _minute;
-          text_controller.text = _time;
-          text_controller.text = formatDate(
-              DateTime(2019, 08, 1, selectedTime.hour, selectedTime.minute),
-              [hh, ':', nn, " ", am]).toString();
-        });
-    }
 
     return MaterialApp(
       theme: ThemeData(
@@ -673,157 +696,195 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
                                   ),
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20.0, top: 0),
-                                        child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              "Opening Time",
-                                              style: TextStyle(
-                                                  fontFamily: 'poppins_medium',
-                                                  fontSize: 12),
-                                            )),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 10.0,
-                                            bottom: 0.0,
-                                            left: 0.0,
-                                            right: 5.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            _selectTime(context, open_time);
-                                          },
-                                          child: TextFormField(
-                                            autofocus: false,
-                                            showCursor: false,
-                                            controller: open_time,
-                                            decoration: InputDecoration(
-                                                suffixIcon: new Icon(Icons
-                                                    .date_range_sharp),
-                                                fillColor: color.light_gray,
-                                                filled: true,
-                                                //   suffixIcon: Icon(Icons.phone),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                        // width: 0.0 produces a thin "hairline" border
-                                                        borderSide: BorderSide(
-                                                            color: color
-                                                                .light_gray),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    25.0)),
-                                                focusedBorder:
-                                                    new OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: color.gray),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    25.0)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25.0)),
-                                                hintText: "Select Time",
-                                                hintStyle: TextStyle(
-                                                    color: color.hint_color,
-                                                    fontSize: 14)
-                                                // labelText: 'Phone number',
-                                                ),
-                                            enabled: false,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20.0, top: 0),
-                                        child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              "Closing Time",
-                                              style: TextStyle(
-                                                  fontFamily: 'poppins_medium',
-                                                  fontSize: 12),
-                                            )),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 10.0,
-                                            bottom: 0.0,
-                                            left: 5.0,
-                                            right: 0.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            _selectTime(context, close_time);
-                                          },
-                                          child: TextFormField(
-                                            autofocus: false,
-                                            showCursor: false,
-                                            controller: close_time,
-                                            decoration: InputDecoration(
-                                                suffixIcon: new Icon(Icons
-                                                    .date_range_sharp),
-                                                fillColor: color.light_gray,
-                                                filled: true,
-                                                //   suffixIcon: Icon(Icons.phone),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                        // width: 0.0 produces a thin "hairline" border
-                                                        borderSide: BorderSide(
-                                                            color: color
-                                                                .light_gray),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    25.0)),
-                                                focusedBorder:
-                                                    new OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: color.gray),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    25.0)),
-                                                border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25.0)),
-                                                hintText: "Select Time",
-                                                hintStyle: TextStyle(
-                                                    color: color.hint_color,
-                                                    fontSize: 14)
-                                                // labelText: 'Phone number',
-                                                ),
-                                            onSaved: (String val) {
-                                              _setTime = val;
-                                            },
-                                            enabled: false,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          SizedBox(
+                            height: 5.0,
                           ),
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: isSplite,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isSplite = value;
+                                  });
+                                },
+                                activeColor: color.primery_color,
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              Text(
+                                "Split Time",
+                                style: TextStyle(
+                                  fontFamily: 'poppins_medium',
+                                  fontSize: 14,
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          isSplite
+                              ? showSpliteWidget()
+                              : Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20.0, top: 0),
+                                              child: Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Text(
+                                                    "Opening Time",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'poppins_medium',
+                                                        fontSize: 12),
+                                                  )),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 10.0,
+                                                  bottom: 0.0,
+                                                  left: 0.0,
+                                                  right: 5.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  _selectTime(
+                                                      context, open_time);
+                                                },
+                                                child: TextFormField(
+                                                  autofocus: false,
+                                                  showCursor: false,
+                                                  controller: open_time,
+                                                  decoration: InputDecoration(
+                                                      suffixIcon: new Icon(Icons
+                                                          .date_range_sharp),
+                                                      fillColor:
+                                                          color.light_gray,
+                                                      filled: true,
+                                                      //   suffixIcon: Icon(Icons.phone),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                              // width: 0.0 produces a thin "hairline" border
+                                                              borderSide: BorderSide(
+                                                                  color: color
+                                                                      .light_gray),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      25.0)),
+                                                      focusedBorder:
+                                                          new OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                      color: color
+                                                                          .gray),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      25.0)),
+                                                      border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  25.0)),
+                                                      hintText: "Select Time",
+                                                      hintStyle: TextStyle(
+                                                          color: color.hint_color,
+                                                          fontSize: 14)
+                                                      // labelText: 'Phone number',
+                                                      ),
+                                                  enabled: false,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20.0, top: 0),
+                                              child: Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Text(
+                                                    "Closing Time",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'poppins_medium',
+                                                        fontSize: 12),
+                                                  )),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 10.0,
+                                                  bottom: 0.0,
+                                                  left: 5.0,
+                                                  right: 0.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  _selectTime(
+                                                      context, close_time);
+                                                },
+                                                child: TextFormField(
+                                                  autofocus: false,
+                                                  showCursor: false,
+                                                  controller: close_time,
+                                                  decoration: InputDecoration(
+                                                      suffixIcon: new Icon(Icons
+                                                          .date_range_sharp),
+                                                      fillColor:
+                                                          color.light_gray,
+                                                      filled: true,
+                                                      //   suffixIcon: Icon(Icons.phone),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                              // width: 0.0 produces a thin "hairline" border
+                                                              borderSide: BorderSide(
+                                                                  color: color
+                                                                      .light_gray),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      25.0)),
+                                                      focusedBorder:
+                                                          new OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                      color: color
+                                                                          .gray),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      25.0)),
+                                                      border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  25.0)),
+                                                      hintText: "Select Time",
+                                                      hintStyle: TextStyle(
+                                                          color: color.hint_color,
+                                                          fontSize: 14)
+                                                      // labelText: 'Phone number',
+                                                      ),
+                                                  onSaved: (String val) {
+                                                    _setTime = val;
+                                                  },
+                                                  enabled: false,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(top: 30.0),
@@ -860,6 +921,16 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
                                     ),
                                   ),
                                   onPressed: () async {
+                                    print(
+                                        "Open Morning:=${open_time_morning.text}");
+                                    print(
+                                        "Close Morning:=${close_time_morning.text}");
+
+                                    print(
+                                        "Open Morning:=${open_time_evening.text}");
+                                    print(
+                                        "Close Morning:=${close_time_evening.text}");
+
                                     if (is_connected) {
                                       if (isProgress == false) {
                                         if (buisness_name.text == "") {
@@ -979,6 +1050,269 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
           );
         }
       },
+    );
+  }
+
+  Widget showSpliteWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text(
+            "Morning",
+            style: TextStyle(
+                fontFamily: 'poppins_medium',
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 0),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Opening Time",
+                            style: TextStyle(
+                                fontFamily: 'poppins_medium', fontSize: 12),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 10.0, bottom: 0.0, left: 0.0, right: 5.0),
+                      child: InkWell(
+                        onTap: () {
+                          _selectTime(context, open_time_morning);
+                        },
+                        child: TextFormField(
+                          autofocus: false,
+                          showCursor: false,
+                          controller: open_time_morning,
+                          decoration: InputDecoration(
+                              suffixIcon: new Icon(Icons.date_range_sharp),
+                              fillColor: color.light_gray,
+                              filled: true,
+                              //   suffixIcon: Icon(Icons.phone),
+                              enabledBorder: OutlineInputBorder(
+                                  // width: 0.0 produces a thin "hairline" border
+                                  borderSide:
+                                      BorderSide(color: color.light_gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              focusedBorder: new OutlineInputBorder(
+                                  borderSide: BorderSide(color: color.gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              hintText: "Select Time",
+                              hintStyle: TextStyle(
+                                  color: color.hint_color, fontSize: 14)
+                              // labelText: 'Phone number',
+                              ),
+                          enabled: false,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 0),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Closing Time",
+                            style: TextStyle(
+                                fontFamily: 'poppins_medium', fontSize: 12),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 10.0, bottom: 0.0, left: 5.0, right: 0.0),
+                      child: InkWell(
+                        onTap: () {
+                          _selectTime(context, close_time_morning);
+                        },
+                        child: TextFormField(
+                          autofocus: false,
+                          showCursor: false,
+                          controller: close_time_morning,
+                          decoration: InputDecoration(
+                              suffixIcon: new Icon(Icons.date_range_sharp),
+                              fillColor: color.light_gray,
+                              filled: true,
+                              //   suffixIcon: Icon(Icons.phone),
+                              enabledBorder: OutlineInputBorder(
+                                  // width: 0.0 produces a thin "hairline" border
+                                  borderSide:
+                                      BorderSide(color: color.light_gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              focusedBorder: new OutlineInputBorder(
+                                  borderSide: BorderSide(color: color.gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              hintText: "Select Time",
+                              hintStyle: TextStyle(
+                                  color: color.hint_color, fontSize: 14)
+                              // labelText: 'Phone number',
+                              ),
+                          onSaved: (String val) {
+                            _setTime = val;
+                          },
+                          enabled: false,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text(
+            "Evening",
+            style: TextStyle(
+                fontFamily: 'poppins_medium',
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 0),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Opening Time",
+                            style: TextStyle(
+                                fontFamily: 'poppins_medium', fontSize: 12),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 10.0, bottom: 0.0, left: 0.0, right: 5.0),
+                      child: InkWell(
+                        onTap: () {
+                          _selectTime(context, open_time_evening);
+                        },
+                        child: TextFormField(
+                          autofocus: false,
+                          showCursor: false,
+                          controller: open_time_evening,
+                          decoration: InputDecoration(
+                              suffixIcon: new Icon(Icons.date_range_sharp),
+                              fillColor: color.light_gray,
+                              filled: true,
+                              //   suffixIcon: Icon(Icons.phone),
+                              enabledBorder: OutlineInputBorder(
+                                  // width: 0.0 produces a thin "hairline" border
+                                  borderSide:
+                                      BorderSide(color: color.light_gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              focusedBorder: new OutlineInputBorder(
+                                  borderSide: BorderSide(color: color.gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              hintText: "Select Time",
+                              hintStyle: TextStyle(
+                                  color: color.hint_color, fontSize: 14)
+                              // labelText: 'Phone number',
+                              ),
+                          enabled: false,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 0),
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Closing Time",
+                            style: TextStyle(
+                                fontFamily: 'poppins_medium', fontSize: 12),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 10.0, bottom: 0.0, left: 5.0, right: 0.0),
+                      child: InkWell(
+                        onTap: () {
+                          _selectTime(context, close_time_evening);
+                        },
+                        child: TextFormField(
+                          autofocus: false,
+                          showCursor: false,
+                          controller: close_time_evening,
+                          decoration: InputDecoration(
+                              suffixIcon: new Icon(Icons.date_range_sharp),
+                              fillColor: color.light_gray,
+                              filled: true,
+                              //   suffixIcon: Icon(Icons.phone),
+                              enabledBorder: OutlineInputBorder(
+                                  // width: 0.0 produces a thin "hairline" border
+                                  borderSide:
+                                      BorderSide(color: color.light_gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              focusedBorder: new OutlineInputBorder(
+                                  borderSide: BorderSide(color: color.gray),
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0)),
+                              hintText: "Select Time",
+                              hintStyle: TextStyle(
+                                  color: color.hint_color, fontSize: 14)
+                              // labelText: 'Phone number',
+                              ),
+                          onSaved: (String val) {
+                            _setTime = val;
+                          },
+                          enabled: false,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

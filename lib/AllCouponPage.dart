@@ -36,11 +36,11 @@ class _AllCouponPageState extends State<AllCouponPage> {
       disable_ack = "",
       disable_ack_msg = "";
   bool is_connected = false;
-  int live_ul = 50,
+  int live_ul = 10,
       live_ll = 0,
-      disable_ul = 50,
+      disable_ul = 10,
       disable_ll = 0,
-      expier_ul = 50,
+      expier_ul = 10,
       expier_ll = 0;
 
   final Connectivity _connectivity = Connectivity();
