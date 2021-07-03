@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:dealtors_vendor/CoupenDetail.dart';
 import 'package:dealtors_vendor/CreateCoupon.dart';
 import 'package:dealtors_vendor/Model/Coupon.dart';
+import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
+import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:flutter/services.dart';
-import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
-import 'dart:convert';
-import 'CustomWidget/DrawerWidget.dart';
+
 import 'CustomWidget/ToastFile.dart';
 import 'CustomWidget/empty.dart';
 import 'Model/GenrelModel.dart';
@@ -200,7 +200,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
             live_data.clear();
           }
           try {
-            for (int i = 0; i <= extractdata['result'].length; i++) {
+            for (int i = 0; i < extractdata['result'].length; i++) {
               Coupon c = new Coupon();
               c.title = extractdata["result"][i]['title'].toString();
               c.id = extractdata["result"][i]['id'].toString();
@@ -220,7 +220,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
           } catch (e) {
             print(e);
           }
-          live_ll = live_ll + live_data.length;
+          live_ll = live_ll + extractdata['result'].length;
 
           print(extractdata['ack_msg']);
           // print(ll.toString());
@@ -256,7 +256,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
             disable_data.clear();
           }
           try {
-            for (int i = 0; i <= extractdata['result'].length; i++) {
+            for (int i = 0; i < extractdata['result'].length; i++) {
               Coupon c = new Coupon();
               c.title = extractdata["result"][i]['title'].toString();
               c.id = extractdata["result"][i]['id'].toString();
@@ -274,9 +274,10 @@ class _AllCouponPageState extends State<AllCouponPage> {
               disable_data.add(c);
             }
           } catch (e) {
+            print("Error");
             print(e);
           }
-          disable_ll = disable_ll + disable_data.length;
+          disable_ll = disable_ll + extractdata['result'].length;
           //isProgress = false;
           print(extractdata['ack_msg']);
           isProgress = false;
@@ -307,7 +308,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
               extractdata["result"].map((x) => Coupon.fromJson(x)));*/
 
           try {
-            for (int i = 0; i <= extractdata['result'].length; i++) {
+            for (int i = 0; i < extractdata['result'].length; i++) {
               Coupon c = new Coupon();
               c.title = extractdata["result"][i]['title'].toString();
               c.id = extractdata["result"][i]['id'].toString();
@@ -327,7 +328,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
           } catch (e) {
             print(e);
           }
-          expier_ll = expier_ll + expier_data.length;
+          expier_ll = expier_ll + extractdata['result'].length;
 
           //isProgress = false;
           print(extractdata['ack_msg']);
@@ -378,6 +379,7 @@ class _AllCouponPageState extends State<AllCouponPage> {
       }
     });
   }
+
   BuildContext maincontext;
 
   @override
@@ -647,11 +649,9 @@ class _AllCouponPageState extends State<AllCouponPage> {
                               item.isActive, "1", context),
                         ],
                       ),
-
                       Text(
                         item.description,
                         maxLines: 2,
-
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             fontSize: 14,

@@ -374,6 +374,21 @@ getLiveCoupon(String uid, String ll, String ul) {
 }
 
 getDisableCoupon(String uid, String ll, String ul) {
+  print(url +
+      "service_user.php?" +
+      secure_field +
+      "=" +
+      secure_value +
+      "&" +
+      secure_service +
+      "=" +
+      "11" +
+      "&appFlag=1&flag=2&vendor_id=" +
+      uid +
+      "&ll=" +
+      ll +
+      "&ul=" +
+      ul);
   return http.post(
       url +
           "service_user.php?" +

@@ -951,17 +951,35 @@ class _AddRestaurantPageState extends State<AddRestaurantPage> {
                                           isProgress = false;
                                           SnackBarFail("Please Enter Location",
                                               context, _scaffoldKey);
-                                        } else if (open_time.text == "") {
+                                        } else if (open_time.text == "" &&
+                                            open_time_morning.text == "") {
                                           isProgress = false;
                                           SnackBarFail(
                                               "Please Enter Opening time",
                                               context,
                                               _scaffoldKey);
-                                        } else if (close_time.text == "") {
+                                        } else if (close_time.text == "" &&
+                                            close_time_morning.text == "") {
                                           isProgress = false;
 
                                           SnackBarFail(
                                               "Please Enter Closing time",
+                                              context,
+                                              _scaffoldKey);
+                                        } else if (open_time_evening.text ==
+                                            "") {
+                                          isProgress = false;
+
+                                          SnackBarFail(
+                                              "Please Enter Eveninig Open time",
+                                              context,
+                                              _scaffoldKey);
+                                        } else if (close_time_evening.text ==
+                                            "") {
+                                          isProgress = false;
+
+                                          SnackBarFail(
+                                              "Please Enter Evening Closing time",
                                               context,
                                               _scaffoldKey);
                                         } else {

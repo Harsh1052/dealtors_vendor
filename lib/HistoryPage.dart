@@ -1,13 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:dealtors_vendor/Model/Coupon.dart';
-import 'package:dealtors_vendor/netutils/Retrofit.dart';
-import 'package:flutter/material.dart';
-import 'package:dealtors_vendor/style/Color.dart' as color;
 import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
+import 'package:dealtors_vendor/style/Color.dart' as color;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
 
 import 'CustomWidget/empty.dart';
 import 'netutils/preferences.dart';
@@ -18,12 +17,12 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _UsedCouponState extends State<HistoryPage> {
-  List<UsedCouponModel> coupon_data=new List();
+  List<UsedCouponModel> coupon_data = new List();
 
   bool isProgress = false;
   String ack = "", ack_msg = "";
   bool is_connected = false;
-  int ul = 50, ll = 0;
+  int ul = 10, ll = 0;
   ScrollController history_scrollController = ScrollController();
 
   final Connectivity _connectivity = Connectivity();
@@ -122,7 +121,7 @@ class _UsedCouponState extends State<HistoryPage> {
         try {
           /* coupon_data = List<UsedCouponModel>.from(
               extractdata["result"].map((x) => UsedCouponModel.fromJson(x)));*/
-          for (int i = 0; i <= extractdata['result'].length; i++) {
+          for (int i = 0; i < extractdata['result'].length; i++) {
             UsedCouponModel uc = UsedCouponModel();
             uc.id = extractdata["result"][i]['id'].toString();
             uc.title = extractdata["result"][i]['coupon_name'].toString();
@@ -136,10 +135,12 @@ class _UsedCouponState extends State<HistoryPage> {
             coupon_data.add(uc);
           }
         } catch (e) {
+          print("Error");
           print(e);
         }
-        ll = ll + coupon_data.length;
 
+        print("List Length:=${coupon_data.length}");
+        ll = ll + extractdata['result'].length;
       } else if (extractdata['ack'] == 2) {
         isProgress = false;
         SharedPreferencesHelper.clearAllPreference();
@@ -182,6 +183,7 @@ class _UsedCouponState extends State<HistoryPage> {
               onPressed: () => Navigator.pop(context)),
         ),
         body: SingleChildScrollView(
+          controller: history_scrollController,
           child: !is_connected
               ? Container(
                   width: MediaQuery.of(context).size.width,

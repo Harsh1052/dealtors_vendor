@@ -55,6 +55,7 @@ class _HomePageState extends State<HomePage> {
   String total_revenue = "0";
   String app_new_version = "";
   String footerText = "";
+  int tokens = 0;
 
   Future<String> CheckVendorStatus() async {
     print("calling....");
@@ -96,8 +97,9 @@ class _HomePageState extends State<HomePage> {
                     msg: extractdata['status_message'],
                     type: extractdata['status']));
             Navigator.pushReplacement(context, otproute);
-          } else if (extractdata['status'] == "1") {
-            if (isApprove_open == "1") {
+          } else if (extractdata['status'] == "1" && tokens < 0) {
+            tokens = extractdata['coupon_count'];
+            if (isApprove_open == "1" && tokens < 1) {
               Route otproute =
                   MaterialPageRoute(builder: (context) => AccountVerifiy());
               Navigator.push(context, otproute).then(onGoBack);
