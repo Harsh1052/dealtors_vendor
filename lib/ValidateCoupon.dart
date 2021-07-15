@@ -1,15 +1,13 @@
 import 'dart:async';
-
-import 'package:connectivity/connectivity.dart';
-import 'package:dealtors_vendor/AccountVerifyPage.dart';
-import 'package:dealtors_vendor/CustomWidget/FailVerifyDialog.dart';
-import 'package:dealtors_vendor/CustomWidget/SuccessVerifyDialog.dart';
-import 'package:dealtors_vendor/HomePage.dart';
-import 'package:flutter/material.dart';
-import 'package:dealtors_vendor/style/Color.dart' as color;
-import 'package:flutter/services.dart';
-import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
 import 'dart:convert';
+
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:dealtors_vendor/CustomWidget/SuccessVerifyDialog.dart';
+import 'package:dealtors_vendor/netutils/Retrofit.dart' as retrofit;
+import 'package:dealtors_vendor/style/Color.dart' as color;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'CustomWidget/ToastFile.dart';
 import 'netutils/preferences.dart';
@@ -213,34 +211,56 @@ class _AddRestaurantPageState extends State<ValidateCoupon> {
                                       TextStyle(fontFamily: 'poppins_medium'),
                                 )),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: 10.0, bottom: 10.0, left: 0.0, right: 0.0),
-                            child: TextFormField(
-                              controller: couponCodeController,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                  fillColor: color.light_gray,
-                                  filled: true,
-                                  //   suffixIcon: Icon(Icons.phone),
-                                  enabledBorder: OutlineInputBorder(
-                                      // width: 0.0 produces a thin "hairline" border
-                                      borderSide:
-                                          BorderSide(color: color.light_gray),
-                                      borderRadius:
-                                          BorderRadius.circular(25.0)),
-                                  focusedBorder: new OutlineInputBorder(
-                                      borderSide: BorderSide(color: color.gray),
-                                      borderRadius:
-                                          BorderRadius.circular(25.0)),
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(25.0)),
-                                  hintText: "Enter your Coupon Code here",
-                                  hintStyle: TextStyle(color: color.hint_color)
-                                  // labelText: 'Phone number',
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 7,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 0.0,
+                                      right: 0.0),
+                                  child: TextFormField(
+                                    controller: couponCodeController,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                        fillColor: color.light_gray,
+                                        filled: true,
+                                        //   suffixIcon: Icon(Icons.phone),
+                                        enabledBorder: OutlineInputBorder(
+                                            // width: 0.0 produces a thin "hairline" border
+                                            borderSide: BorderSide(
+                                                color: color.light_gray),
+                                            borderRadius:
+                                                BorderRadius.circular(25.0)),
+                                        focusedBorder: new OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: color.gray),
+                                            borderRadius:
+                                                BorderRadius.circular(25.0)),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.0)),
+                                        hintText: "Enter your Coupon Code here",
+                                        hintStyle:
+                                            TextStyle(color: color.hint_color)
+                                        // labelText: 'Phone number',
+                                        ),
                                   ),
-                            ),
+                                ),
+                              ),
+                              Expanded(
+                                child: IconButton(
+                                    icon: Icon(Icons.qr_code_scanner_outlined),
+                                    onPressed: () async {
+                                      var result = await BarcodeScanner.scan();
+                                      couponCodeController.text =
+                                          result.rawContent;
+                                      setState(() {});
+                                    }),
+                              )
+                            ],
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 20.0, top: 20),
@@ -302,7 +322,7 @@ class _AddRestaurantPageState extends State<ValidateCoupon> {
                                   ),
                                   onPressed: () {
                                     if (is_connected) {
-                                      if (isProgress==false) {
+                                      if (isProgress == false) {
                                         if (couponCodeController.text == "") {
                                           isProgress = false;
 
@@ -323,7 +343,8 @@ class _AddRestaurantPageState extends State<ValidateCoupon> {
                                               couponCodeController.text,
                                               billAmountController.text);
                                         }
-                                      } /*else {
+                                      }
+                                      /*else {
                                         SnackBarFail(
                                             "Still Your old process working",
                                             context,
@@ -416,9 +437,7 @@ class _AddRestaurantPageState extends State<ValidateCoupon> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25)),
                               onPressed: () {
-
-                                  Navigator.pop(context);
-
+                                Navigator.pop(context);
                               },
                               child: Text(
                                 "Try Again",

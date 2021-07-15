@@ -53,6 +53,7 @@ dependencies:
   store_redirect: ^1.0.2
   firebase_core: ^0.5.0+1
   firebase_auth: ^0.18.1+2
+  barcode_scan: ^3.0.1
 
 
 #flutter_icons:

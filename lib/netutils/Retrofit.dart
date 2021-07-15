@@ -295,6 +295,19 @@ getbanner(String uid) {
 }
 
 checkVendorStatus(String uid) {
+  print(url +
+      "service_vendor.php?" +
+      secure_field +
+      "=" +
+      secure_value +
+      "&" +
+      "vendor_id" +
+      uid +
+      "appFlag" +
+      "1" +
+      secure_service +
+      "=" +
+      "23");
   return http.post(
       url +
           "service_vendor.php?" +

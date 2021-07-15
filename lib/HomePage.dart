@@ -97,9 +97,11 @@ class _HomePageState extends State<HomePage> {
                     msg: extractdata['status_message'],
                     type: extractdata['status']));
             Navigator.pushReplacement(context, otproute);
-          } else if (extractdata['status'] == "1" && tokens < 0) {
-            tokens = extractdata['coupon_count'];
-            if (isApprove_open == "1" && tokens < 1) {
+          } else if (extractdata['status'] == "1") {
+            tokens = extractdata['coupon_total'];
+            print("Token:-$tokens");
+            if (isApprove_open == "1" && (tokens == 0 || tokens == null)) {
+              print("No Token");
               Route otproute =
                   MaterialPageRoute(builder: (context) => AccountVerifiy());
               Navigator.push(context, otproute).then(onGoBack);
